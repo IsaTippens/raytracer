@@ -3,6 +3,7 @@
 #include "color.h";
 #include "hittable_list.h";
 #include "sphere.h";
+#include "moving_sphere.h";
 #include "camera.h";
 #include "material.h";
 
@@ -74,7 +75,8 @@ Hittable_List random_scene()
                     // diffuse
                     auto albedo = Color::random() * Color::random();
                     sphere_material = make_shared<Lambertian>(albedo);
-                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                    auto center2 = center + Vec3(0, random_double(0, 0.5), 0);
+                    world.add(make_shared<Moving_Sphere>(center, center2, 0.0, 1.0, 0.2, sphere_material));
                 }
                 else if (choose_mat < 0.95)
                 {
@@ -108,17 +110,18 @@ Hittable_List random_scene()
 
 int main()
 {
-    const auto aspect_ratio = 3.0 / 2.0;
-    const int image_width = 1920;
-    int image_height = static_cast<int>(image_width / aspect_ratio);
-
     //Image
+
+    auto aspect_ratio = 16.0 / 9.0;
+    int image_width = 400;
+    int image_height = static_cast<int>(image_width / aspect_ratio);
+    int samples_per_pixel = 100;
+    const int max_depth = 50;
 
     auto viewport_height = 2.0;
     auto viewport_width = aspect_ratio * viewport_height;
     auto focal_length = 1.0;
-    const int samples_per_pixel = 500;
-    const int max_depth = 50;
+    
 
     //World
 
@@ -131,7 +134,7 @@ int main()
     Vec3 vup(0, 1, 0);
     auto dist_to_focus = 10.0;
     auto aperture = 0.1;
-    Camera cam(lookfrom, lookat, vup, 90, aspect_ratio, aperture, dist_to_focus);
+    Camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
     //Render
 
