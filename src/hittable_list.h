@@ -2,6 +2,7 @@
 #define HITTABLE_LIST_H
 
 #include "hittable.h"
+#include "aabb.h"
 
 #include <memory>
 #include <vector>
@@ -19,6 +20,9 @@ class Hittable_List : public Hittable {
         virtual bool hit(
             const Ray& ray, double t_min, double t_max, hit_record& rec
         ) const override;
+
+        virtual bool bounding_box(
+            double time0, double time1, AABB& output_box) const override;
     
     public:
         std::vector<shared_ptr<Hittable>> objects;
@@ -39,6 +43,23 @@ bool Hittable_List::hit(const Ray& r, double t_min, double t_max, hit_record& re
     }
 
     return hit_anything;
+}
+
+bool Hittable_List::bounding_box(double time0, double time1, AABB& output_box) const {
+    if (objects.empty()) return false;
+
+    AABB temp_box;
+    bool first_box = true;
+
+    for (const auto& object : objects) {
+        if (!object->bounding_box(time0, time1, temp_box)) {
+            return false;
+        }
+        output_box = first_box ? temp_box : surrounding_box(output_box, temp_box);
+        first_box = false;
+    }
+
+    return true;
 }
 
 #endif
