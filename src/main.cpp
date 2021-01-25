@@ -61,6 +61,7 @@ Hittable_List random_scene()
 
     auto material1 = make_shared<Dielectric>(1.5);
     world.add(make_shared<Sphere>(Point3(0, 1, 0), 1.0, material1));
+    world.add(make_shared<Sphere>(Point3(0, 1, 0), -0.9, material1));
 
     auto material2 = make_shared<Lambertian>(Color(0.4, 0.2, 0.1));
     world.add(make_shared<Sphere>(Point3(-4, 1, 0), 1.0, material2));
